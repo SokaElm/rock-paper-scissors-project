@@ -1,3 +1,24 @@
+const btn = document.querySelectorAll("button");
+const div = document.querySelector("div");
+const game = document.querySelector("#game");
+
+game.addEventListener("click", () => {
+  let result = [0, 0];
+  let i = 0;
+  div.textContent = "Game start. Make a Choice";
+  btn.forEach((button) => {
+    button.addEventListener("click", () => {
+      result = playRound(button.id, result);
+      i++;
+      if (i === 5 || result[0] === 3 || result[1] === 3) {
+        checkScore(result);
+        i = 0;
+        result = [0, 0];
+      }
+    });
+  });
+});
+
 function getComputerChoice() {
   // get random index value
   const randomIndex = Math.floor(Math.random() * 3);
@@ -9,90 +30,71 @@ function getComputerChoice() {
   return computerChoice;
 }
 
-function playRound(lowerPlayerSelection, computerSelection, score) {
-  if (lowerPlayerSelection === computerSelection) {
-    alert("Even Round! Play Again");
-    let result = score;
-    return result;
+function playRound(PlayerSelection, score) {
+  let computerSelection = getComputerChoice();
+  if (PlayerSelection === computerSelection) {
+    div.textContent =
+      "Even Round! Play Again. Score is " +
+      score[0] +
+      " for you and " +
+      score[1] +
+      " for the Computer";
+    return score;
   } else if (
-    (lowerPlayerSelection === "rock" && computerSelection === "scissors") ||
-    (lowerPlayerSelection === "scissors" && computerSelection === "paper") ||
-    (lowerPlayerSelection === "paper" && computerSelection === "rock")
+    (PlayerSelection === "rock" && computerSelection === "scissors") ||
+    (PlayerSelection === "scissors" && computerSelection === "paper") ||
+    (PlayerSelection === "paper" && computerSelection === "rock")
   ) {
-    alert(
-      "You win this Round! " +
-        lowerPlayerSelection +
-        " beats " +
-        computerSelection
-    );
     let result = [score[0] + 1, score[1]];
+
+    div.textContent =
+      "You win this Round! " +
+      PlayerSelection +
+      " beats " +
+      computerSelection +
+      ". Score is " +
+      result[0] +
+      " for you and " +
+      result[1] +
+      " for the Computer";
     return result;
   } else if (
-    (lowerPlayerSelection === "rock" && computerSelection === "paper") ||
-    (lowerPlayerSelection === "scissors" && computerSelection === "rock") ||
-    (lowerPlayerSelection === "paper" && computerSelection === "scissors")
+    (PlayerSelection === "rock" && computerSelection === "paper") ||
+    (PlayerSelection === "scissors" && computerSelection === "rock") ||
+    (PlayerSelection === "paper" && computerSelection === "scissors")
   ) {
-    alert(
-      "You lose this Round! " +
-        computerSelection +
-        " beats " +
-        lowerPlayerSelection
-    );
     let result = [score[0], score[1] + 1];
+    div.textContent =
+      "You lose this Round! " +
+      computerSelection +
+      " beats " +
+      PlayerSelection +
+      ". Score is " +
+      result[0] +
+      " for you and " +
+      result[1] +
+      " for the Computer";
     return result;
   }
 }
 
-function checkPlayerSelection(playerSelection) {
-  if (
-    playerSelection.toLowerCase() !== "rock" &&
-    playerSelection.toLowerCase() !== "paper" &&
-    playerSelection.toLowerCase() !== "scissors"
-  ) {
-    let playerSelection = prompt(
-      "We didn't understand your choice. Choose between paper, rock or scissors"
-    );
-    return checkPlayerSelection(playerSelection);
-  } else {
-    return (lowerPlayerSelection = playerSelection.toLowerCase());
-  }
-}
-
-let score = [0, 0];
-
-function playGame() {
-  for (let i = 1; i <= 5; i++) {
-    let playerSelection = prompt("Choose between paper, rock or scissors");
-    let lowerPlayerSelection = checkPlayerSelection(playerSelection);
-    let computerSelection = getComputerChoice();
-
-    score = playRound(lowerPlayerSelection, computerSelection, score);
-
-    if (score[0] === 3 || score[1] === 3) {
-      break;
-    }
-  }
-
+function checkScore(score) {
   let playerScore = score[0];
   let computerScore = score[1];
 
   if (playerScore === computerScore) {
-    return alert("Even Game. Play Again");
+    div.textContent = "Even Game. Score is " + playerScore;
   } else if (playerScore > computerScore) {
-    return alert(
+    div.textContent =
       "Game is over! You win this Game. Your score is " +
-        playerScore +
-        " against " +
-        computerScore
-    );
+      playerScore +
+      " against " +
+      computerScore;
   } else {
-    return alert(
+    div.textContent =
       "Game is over! You lose this Game. Your score is " +
-        playerScore +
-        " against " +
-        computerScore
-    );
+      playerScore +
+      " against " +
+      computerScore;
   }
 }
-
-playGame();
